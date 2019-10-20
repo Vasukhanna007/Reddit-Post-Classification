@@ -35,7 +35,7 @@ def main():
     #------------------------------------------------------------------------------
     # Convert text to numbers
     #------------------------------------------------------------------------------
-    vectorizer  = CountVectorizer(max_features=2000, min_df=5, max_df=0.7, binary=True)
+    vectorizer  = CountVectorizer(max_features=20000, binary=True)
     train.subreddits = pd.Categorical(train.subreddits)
     train['y']  = train.subreddits.cat.codes
 
