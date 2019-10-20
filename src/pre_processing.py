@@ -58,19 +58,6 @@ def replace_numbers(comment):
 
 def preprocess(df):
 
-    #-------------------------------------------------------------
-    # Add columns
-    #-------------------------------------------------------------
-    df['char_count']    = df['comments'].str.len() 
-    df['stop_words']    = df['comments'].apply(lambda x: len([x for x in x.split() if x in stop]))
-    df['n_questions']   = df['comments'].apply(lambda x: x.count('?'))
-    df['youtube_url']   = df['comments'].apply(lambda x: x.count('youtu'))
-    df['numerics']      = df['comments'].apply(lambda x: len([x for x in x.split() if x.isdigit()]))
-
-    #-------------------------------------------------------------
-    # Text preprocessing for the 'comments' column
-    #-------------------------------------------------------------
-    # Lowercase
     df['comments'] = df['comments'].apply(lambda x: " ".join(x.lower() for x in x.split()))
     # Replace full links by website only
     df['comments'] = df['comments'].apply(lambda x: " ".join(replace_link(x) for x in x.split()))

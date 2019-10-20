@@ -9,7 +9,7 @@ import sys
 import numpy as np
 import pandas as pd
 
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import BernoulliNB
@@ -24,13 +24,17 @@ def main():
         print("ERROR: file %s does not exist.")
         sys.exit(1)
 
+    #------------------------------------------------------------------------------
     # Read the pre-processed train set
+    #------------------------------------------------------------------------------
     train = pd.read_csv(pp_data)
     train.set_index('id', inplace=True, drop=True)
     train['comments']   = train['comments'].astype(str)
     print(train.head())
 
+    #------------------------------------------------------------------------------
     # Convert text to numbers
+    #------------------------------------------------------------------------------
     vectorizer  = CountVectorizer(max_features=2000, min_df=5, max_df=0.7, binary=True)
     train.subreddits = pd.Categorical(train.subreddits)
     train['y']  = train.subreddits.cat.codes
@@ -38,10 +42,11 @@ def main():
     X = vectorizer.fit_transform(list(train['comments'])).toarray()
     y = train['y'].to_numpy()
 
-    # Train/test split
+    #------------------------------------------------------------------------------
+    # Train/test split and training of the two models to compare
+    #------------------------------------------------------------------------------
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-    # Models to compare
     sklearn_nb = BernoulliNB(alpha=1.0, binarize=0.0, fit_prior=True)
     custom_nb  = MultiClassBernouilliNB(alpha=1.0)
 
@@ -51,8 +56,20 @@ def main():
     sklearn_pred = sklearn_nb.predict(X_test)
     custom_pred  = custom_nb.predict(X_test)
 
-    print(accuracy_score(sklearn_test, y_pred))
-    print(accuracy_score(custom_test, y_pred))
+    #------------------------------------------------------------------------------
+    # Accuracy scores
+    #------------------------------------------------------------------------------
+    print("\n")
+    print("Accuracy for sklearn's Naive Bayes = %.3f" % accuracy_score(y_test, sklearn_pred))
+    print("Accuracy of the custom Naive Bayes = %.3f" % accuracy_score(y_test, custom_pred))
+
+    print("\nCLASSIFICATION REPORTS")
+    
+    print("\nSklearn's Naive Bayes")
+    print(classification_report(y_test, sklearn_pred))
+    print("\nCustom Naive Bayes")
+    print(classification_report(y_test, custom_pred))
+    
 
 
 if __name__ == "__main__":
