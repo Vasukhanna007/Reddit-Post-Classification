@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import sys
 import numpy as np
 import pandas as pd
@@ -92,21 +91,7 @@ def preprocess(df):
     # Lemmatization
     df['comments'] = df['comments'].apply(lemmatize)
 
-    #-------------------------------------------------------------
-    # Words that are not in the dictionnary
-    #-------------------------------------------------------------
-    errors = []
-    for comment in df['comments']:
-        errors = errors + [w for w in comment.split() if w not in words]
-
-    f = open("./spelling_errors.txt", "w")
-    for err in errors:
-        f.write("%s\n" % err)
-    f.close()
-
-
     print(df.head())
-    
     return df
 
 
@@ -117,10 +102,7 @@ def main():
     train = preprocess(train)
     train.to_csv("train_df_processed.csv", index=False)
 
-    text = open("pp_train.csv", "w")
-    for comment in train['comments']:
-        text.write("%s\n\n" % comment)
-    text.close()
+    print("\nFile train_df_processed.csv is ready")
    
 
 if __name__ == "__main__":
