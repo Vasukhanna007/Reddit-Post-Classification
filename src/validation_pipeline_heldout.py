@@ -5,6 +5,7 @@
 import sys
 import numpy as np
 import pandas as pd
+import time
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
@@ -57,6 +58,11 @@ def main():
         "Multinomial Naive Bayes": np.nan,
         "Support Vector Machine" : np.nan
     }
+    runtimes = {
+        "Multinomial Naive Bayes": np.nan,
+        "Support Vector Machine" : np.nan
+    }
+
 
     for name,clf in models.items():
 
@@ -66,15 +72,22 @@ def main():
             ('clf', clf),
         ])
 
+        start_time = time.time()
         text_clf.fit(X_train, y_train)
+        end_time = time.time()
+
         accuracies[name] = np.mean(y_test==text_clf.predict(X_test))
+        runtimes[name] = end_time - start_time
 
 
     # Print the accuracies
     for name,acc in accuracies.items():
         print("Test-set accuracy for %s = %.3f" % (name, acc))
+    # Print the runtimes
+    for name,acc in runtimes.items():
+        print("fit() runtime for %s = %.3f" % (name, acc))
 
-   
+
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@
 1. TYPICAL WORKFLOW
 -----------------------------------------------------------
 
+>>> pip install -r ../requirements.txt
+
 -----------------------
 Step1 : pre-processing
 -----------------------
@@ -16,8 +18,8 @@ The preprocessed dataframe will be available in csv format as train_df_processed
 -----------------------
 Step2 : pipeline
 -----------------------
-Script: validation_pipeline_heldout.py or validation_pipeline_heldout.py
-Run either of these two scripts compare the model accuracies on the preprocessed train set.
+Script: validation_pipeline_heldout.py or validation_pipeline_kfold.py
+Depending on the validation strategy, run either of these two scripts compare the model accuracies on the preprocessed train set.
 
 -----------------------
 Step3 : generate test 

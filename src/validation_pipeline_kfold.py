@@ -5,6 +5,7 @@
 import sys
 import numpy as np
 import pandas as pd
+import time
 from tabulate import tabulate
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -94,6 +95,11 @@ def main():
         "Multinomial Naive Bayes": {},
         "Support Vector Machine" : {}
     }
+    runtimes = {
+        "Multinomial Naive Bayes": {},
+        "Support Vector Machine" : {}
+    }
+
 
     for name,clf in models.items():
         print(name)
@@ -113,19 +119,27 @@ def main():
             y_train = kfold_dic[fold]['train']['subreddits']
             y_test  = kfold_dic[fold]['test']['subreddits']
         
+            # Compute runtime
+            start_time = time.time()
             text_clf.fit(X_train, y_train)
+            end_time = time.time()
             
+            # Update the accuracies
             accuracies[name][fold] = np.mean(y_test==text_clf.predict(X_test))
+            # Update the runtimes
+            runtimes[name][fold] = end_time - start_time
+
 
         # Average accuracy for the model
         accuracies[name]['avg'] = sum([acc for acc in accuracies[name].values()])/n_folds
+        # Average runtime for the model
+        runtimes[name]['avg'] = sum([run for run in runtimes[name].values()])/n_folds
 
 
     #------------------------------------------------------------------------------
     # Print the accuracies
     #------------------------------------------------------------------------------
     print("\n\nModel Accuracies\n\n")
-
     headers = ['Model'] + [ fold for fold in kfold_dic.keys()] + ['Avg Accuracy']
     rows    = []
     for name,acc in accuracies.items():
@@ -134,10 +148,20 @@ def main():
         for fold in acc.keys():
             row.append('%.3f' % acc[fold])
         rows.append(row)
-
     print(tabulate(rows, headers=headers))
-    print("\n")
    
+    print("\n\nModel Runtimes\n\n")
+    headers = ['Model'] + [ fold for fold in kfold_dic.keys()] + ['Avg Runtime']
+    rows    = []
+    for name,run in runtimes.items():
+        row = []
+        row.append(name)
+        for fold in run.keys():
+            row.append('%.3f' % run[fold])
+        rows.append(row)
+    print(tabulate(rows, headers=headers))
+ 
+
 
 if __name__ == "__main__":
     main()
