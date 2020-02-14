@@ -1,4 +1,4 @@
-# project2
+# Reddit-Post-Classification
 
 Please refer to the README inside the src/ directory for instructions on how to run the different scripts.
 
